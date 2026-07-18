@@ -166,7 +166,7 @@ const SOCIALS = [
   },
   {
     label: "Telegram",
-    href: "https://t.me/+201021399112",
+    href: "https://t.me/+201004354231",
     color: "#26a5e4",
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" width={17} height={17}>

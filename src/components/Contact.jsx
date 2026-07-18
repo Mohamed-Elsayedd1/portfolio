@@ -391,7 +391,7 @@ const ITEMS = [
   {
     id: "telegram",
     label: "Telegram",
-    href: "https://t.me/+201021399112",
+    href: "https://t.me/+201004354231",
     orbitRadius: INNER_R,
     startAngle: Math.PI / 2,
     speed: 0.0035,
