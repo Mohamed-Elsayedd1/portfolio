@@ -40,6 +40,10 @@ const CONSTELLATIONS = [
       { name: "PostgreSQL", x: 40, y: 42, size: 11, level: "Proficient" },
       { name: "Entity Framework", x: 58, y: 68, size: 10, level: "Proficient" },
       { name: "SQL Server", x: 44, y: 62, size: 11, level: "Proficient" },
+      { name: "CQRS & MediatR", x: 52, y: 82, size: 11, level: "Advanced" },
+      { name: "FluentValidation", x: 68, y: 80, size: 10, level: "Advanced" },
+      { name: "AutoMapper", x: 34, y: 80, size: 10, level: "Proficient" },
+      { name: "BCrypt", x: 42, y: 90, size: 9, level: "Proficient" },
     ],
     lines: [
       [0, 1],
@@ -49,6 +53,11 @@ const CONSTELLATIONS = [
       [3, 2],
       [3, 5],
       [5, 4],
+      [1, 6],
+      [6, 7],
+      [6, 8],
+      [8, 9],
+      [4, 8],
     ],
   },
   {
@@ -62,6 +71,7 @@ const CONSTELLATIONS = [
       { name: "SEO", x: 74, y: 62, size: 13, level: "Advanced" },
       { name: "Postman", x: 66, y: 44, size: 11, level: "Advanced" },
       { name: "VS Code", x: 82, y: 70, size: 12, level: "Advanced" },
+      { name: "Serilog", x: 60, y: 36, size: 10, level: "Advanced" },
     ],
     lines: [
       [0, 1],
@@ -69,6 +79,7 @@ const CONSTELLATIONS = [
       [1, 4],
       [3, 2],
       [2, 4],
+      [3, 5],
     ],
   },
 ];
@@ -123,6 +134,31 @@ const PILLS = [
     name: "Vitest",
     color: "#6e9f18",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitest/vitest-original.svg",
+  },
+  {
+    name: "Railway",
+    color: "#c084fc",
+    icon: "https://cdn.simpleicons.org/railway/C084FC",
+  },
+  {
+    name: "Cloudflare",
+    color: "#f38020",
+    icon: "https://cdn.simpleicons.org/cloudflare/F38020",
+  },
+  {
+    name: "OAuth 2.0",
+    color: "#f78c40",
+    icon: "https://cdn.simpleicons.org/openid/F78C40",
+  },
+  {
+    name: "TOTP 2FA",
+    color: "#4285f4",
+    icon: "https://cdn.simpleicons.org/googleauthenticator/4285F4",
+  },
+  {
+    name: "Jasmine & Karma",
+    color: "#8a4182",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jasmine/jasmine-plain.svg",
   },
 ];
 
@@ -409,7 +445,9 @@ const GalaxyMap = () => {
   );
 };
 
-
+/* ─────────────────────────────────────────────
+   LEGEND
+───────────────────────────────────────────── */
 const Legend = () => (
   <div className="flex flex-wrap justify-center gap-8 mt-6">
     {CONSTELLATIONS.map((c) => (
@@ -426,7 +464,9 @@ const Legend = () => (
   </div>
 );
 
-
+/* ─────────────────────────────────────────────
+   MAIN
+───────────────────────────────────────────── */
 const Skills = () => (
   <section id="skills" className="relative z-10 py-24 px-6">
     <div className="max-w-7xl mx-auto">
