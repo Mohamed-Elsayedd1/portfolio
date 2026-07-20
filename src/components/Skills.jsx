@@ -75,21 +75,6 @@ const CONSTELLATIONS = [
 
 const PILLS = [
   {
-    name: "Redux",
-    color: "#764abc",
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redux/redux-original.svg",
-  },
-  {
-    name: "React Router",
-    color: "#ca4245",
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/reactrouter/reactrouter-original.svg",
-  },
-  {
-    name: "Axios",
-    color: "#5a29e4",
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/axios/axios-plain.svg",
-  },
-  {
     name: "JWT",
     color: "#d63aff",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-plain.svg",
@@ -105,14 +90,39 @@ const PILLS = [
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swagger/swagger-original.svg",
   },
   {
-    name: "Figma",
-    color: "#f24e1e",
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
-  },
-  {
     name: "Cloudinary",
     color: "#3448c5",
     icon: "https://cdn.simpleicons.org/cloudinary/3448C5",
+  },
+  {
+    name: "Docker",
+    color: "#2496ed",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-plain.svg",
+  },
+  {
+    name: "TanStack Query",
+    color: "#ff4154",
+    icon: "https://cdn.simpleicons.org/reactquery/FF4154",
+  },
+  {
+    name: "React Hook Form",
+    color: "#ec5990",
+    icon: "https://cdn.simpleicons.org/reacthookform/EC5990",
+  },
+  {
+    name: "Zod",
+    color: "#3e67b1",
+    icon: "https://cdn.simpleicons.org/zod/3E67B1",
+  },
+  {
+    name: "shadcn/ui",
+    color: "#f8fafc",
+    icon: "https://cdn.simpleicons.org/shadcnui/F8FAFC",
+  },
+  {
+    name: "Vitest",
+    color: "#6e9f18",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitest/vitest-original.svg",
   },
 ];
 
@@ -399,9 +409,7 @@ const GalaxyMap = () => {
   );
 };
 
-/* ─────────────────────────────────────────────
-   LEGEND
-───────────────────────────────────────────── */
+
 const Legend = () => (
   <div className="flex flex-wrap justify-center gap-8 mt-6">
     {CONSTELLATIONS.map((c) => (
@@ -418,9 +426,7 @@ const Legend = () => (
   </div>
 );
 
-/* ─────────────────────────────────────────────
-   MAIN
-───────────────────────────────────────────── */
+
 const Skills = () => (
   <section id="skills" className="relative z-10 py-24 px-6">
     <div className="max-w-7xl mx-auto">
