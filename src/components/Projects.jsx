@@ -390,16 +390,17 @@ const Projects = () => {
                   </div>
 
                   {/* Bottom HUD — tech stack preview */}
-                  <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between">
-                    <div className="flex gap-1.5">
+                  <div className="absolute bottom-3 left-4 right-4 z-20 flex items-center justify-between flex-wrap gap-1.5">
+                    <div className="flex gap-1.5 flex-wrap">
                       {project.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
                           className="text-xs font-mono px-2 py-0.5 rounded"
                           style={{
-                            background: `${color}18`,
-                            color: `${color}cc`,
-                            border: `1px solid ${color}20`,
+                            background: "rgba(0,0,0,0.7)",
+                            color: `${color}`,
+                            border: `1px solid ${color}40`,
+                            backdropFilter: "blur(8px)",
                           }}
                         >
                           {tag}
