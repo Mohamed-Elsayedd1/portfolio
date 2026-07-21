@@ -589,6 +589,22 @@ const Contact = () => {
     return () => cancelAnimationFrame(raf);
   }, [isVisible]);
 
+  const wrapperRef = useRef(null);
+  const [orbitScale, setOrbitScale] = useState(1);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.offsetWidth;
+      if (w > 0) setOrbitScale(Math.min(1, w / CONTAINER));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const handleEnter = (id) => {
     setHovered(id);
     const item = ITEMS.find((it) => it.id === id);
@@ -632,89 +648,104 @@ const Contact = () => {
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="relative mx-auto"
-          style={{ width: CONTAINER, height: CONTAINER }}
+        <div
+          ref={wrapperRef}
+          className="w-full max-w-[560px] mx-auto"
+          style={{ height: CONTAINER * orbitScale }}
         >
-          {/* 2D core glow overlay — cyan/blue radiance matching the site theme */}
           <div
-            className="absolute inset-0 z-0 pointer-events-none"
             style={{
-              background: `radial-gradient(circle at center,
-              rgba(56,189,248,0.30) 0%,
-              rgba(14,165,233,0.16) 26%,
-              rgba(56,189,248,0.06) 44%,
-              transparent 65%)`,
+              width: CONTAINER,
+              height: CONTAINER,
+              transform: `scale(${orbitScale})`,
+              transformOrigin: "top left",
             }}
-          />
-
-          <div className="absolute inset-0 z-0">
-            {/* Canvas stays mounted permanently — only its frameloop toggles
-                with visibility. This avoids destroying/recreating the WebGL
-                context (which causes a visible stutter) on every scroll. */}
-            <Canvas
-              camera={{ position: [0, 0, 5], fov: 42 }}
-              frameloop={isVisible ? "always" : "never"}
-            >
-              <Suspense fallback={null}>
-                <Stars
-                  radius={80}
-                  depth={50}
-                  count={4000}
-                  factor={3}
-                  fade
-                  speed={0.6}
-                />
-                <OrbitControls
-                  enableZoom={false}
-                  enablePan={false}
-                  enableRotate={false}
-                />
-                <Sun paused={!!hovered} />
-              </Suspense>
-            </Canvas>
-          </div>
-
-          <OrbitRingsSVG />
-          <EnergyBeam
-            active={!!hovered}
-            targetX={beamTarget.x}
-            targetY={beamTarget.y}
-            isVisible={isVisible}
-          />
-
-          {ITEMS.map((item) => (
-            <OrbitIcon
-              key={item.id}
-              item={item}
-              isActive={hovered === item.id}
-              onEnter={handleEnter}
-              onLeave={handleLeave}
-              registerRef={registerIconRef}
-            />
-          ))}
-
-          {hovered && (
+          >
             <motion.div
-              className="absolute rounded-full pointer-events-none"
-              style={{
-                width: 190,
-                height: 190,
-                left: "50%",
-                top: "50%",
-                transform: "translate(-50%,-50%)",
-                border: "1px solid rgba(167,139,250,0.25)",
-                zIndex: 3,
-              }}
-              animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.08, 0.4] }}
-              transition={{ duration: 1.2, repeat: Infinity }}
-            />
-          )}
-        </motion.div>
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative"
+              style={{ width: CONTAINER, height: CONTAINER }}
+            >
+              {/* 2D core glow overlay — cyan/blue radiance matching the site theme */}
+              <div
+                className="absolute inset-0 z-0 pointer-events-none"
+                style={{
+                  background: `radial-gradient(circle at center,
+                  rgba(56,189,248,0.30) 0%,
+                  rgba(14,165,233,0.16) 26%,
+                  rgba(56,189,248,0.06) 44%,
+                  transparent 65%)`,
+                }}
+              />
+
+              <div className="absolute inset-0 z-0">
+                {/* Canvas stays mounted permanently — only its frameloop toggles
+                    with visibility. This avoids destroying/recreating the WebGL
+                    context (which causes a visible stutter) on every scroll. */}
+                <Canvas
+                  camera={{ position: [0, 0, 5], fov: 42 }}
+                  frameloop={isVisible ? "always" : "never"}
+                >
+                  <Suspense fallback={null}>
+                    <Stars
+                      radius={80}
+                      depth={50}
+                      count={4000}
+                      factor={3}
+                      fade
+                      speed={0.6}
+                    />
+                    <OrbitControls
+                      enableZoom={false}
+                      enablePan={false}
+                      enableRotate={false}
+                    />
+                    <Sun paused={!!hovered} />
+                  </Suspense>
+                </Canvas>
+              </div>
+
+              <OrbitRingsSVG />
+              <EnergyBeam
+                active={!!hovered}
+                targetX={beamTarget.x}
+                targetY={beamTarget.y}
+                isVisible={isVisible}
+              />
+
+              {ITEMS.map((item) => (
+                <OrbitIcon
+                  key={item.id}
+                  item={item}
+                  isActive={hovered === item.id}
+                  onEnter={handleEnter}
+                  onLeave={handleLeave}
+                  registerRef={registerIconRef}
+                />
+              ))}
+
+              {hovered && (
+                <motion.div
+                  className="absolute rounded-full pointer-events-none"
+                  style={{
+                    width: 190,
+                    height: 190,
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%,-50%)",
+                    border: "1px solid rgba(167,139,250,0.25)",
+                    zIndex: 3,
+                  }}
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.08, 0.4] }}
+                  transition={{ duration: 1.2, repeat: Infinity }}
+                />
+              )}
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
