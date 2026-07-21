@@ -2,6 +2,25 @@ import { motion, useAnimationFrame } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 /* ─────────────────────────────────────────────
+   TOUCH-DEVICE DETECTION
+   Used to switch "hover" copy/behavior to "tap"
+   on phones & tablets where hover doesn't exist.
+───────────────────────────────────────────── */
+const useIsTouchDevice = () => {
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none), (pointer: coarse)");
+    setIsTouch(mq.matches);
+    const handler = (e) => setIsTouch(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  return isTouch;
+};
+
+/* ─────────────────────────────────────────────
    DATA
 ───────────────────────────────────────────── */
 const CONSTELLATIONS = [
@@ -227,6 +246,8 @@ const StarNode = ({
   isHovered,
   onEnter,
   onLeave,
+  onToggle,
+  isTouch,
   isVisibleRef,
 }) => {
   const pulseRef = useRef(null);
@@ -244,8 +265,12 @@ const StarNode = ({
     <div
       className="absolute cursor-pointer select-none"
       style={{ left: `${star.x}%`, top: `${star.y}%` }}
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
+      onMouseEnter={isTouch ? undefined : onEnter}
+      onMouseLeave={isTouch ? undefined : onLeave}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle();
+      }}
     >
       {/* outer pulse ring */}
       <div
@@ -339,6 +364,7 @@ const GalaxyMap = () => {
   const scanRef = useRef(null);
   const containerRef = useRef(null);
   const isVisibleRef = useRef(false);
+  const isTouch = useIsTouchDevice();
 
   // Only run the per-frame animations (scan line + star pulses) while the
   // galaxy map is actually on screen.
@@ -370,6 +396,12 @@ const GalaxyMap = () => {
         height: "340px",
         background: "transparent",
         border: "none",
+      }}
+      onClick={() => {
+        if (isTouch) {
+          setHovered(null);
+          setHoveredStar(null);
+        }
       }}
     >
       {/* SVG layer: bg stars + lines */}
@@ -424,6 +456,7 @@ const GalaxyMap = () => {
                 constellationHovered={hovered === c.id}
                 isHovered={hoveredStar === key}
                 isVisibleRef={isVisibleRef}
+                isTouch={isTouch}
                 onEnter={() => {
                   setHovered(c.id);
                   setHoveredStar(key);
@@ -431,6 +464,15 @@ const GalaxyMap = () => {
                 onLeave={() => {
                   setHovered(null);
                   setHoveredStar(null);
+                }}
+                onToggle={() => {
+                  if (hoveredStar === key) {
+                    setHovered(null);
+                    setHoveredStar(null);
+                  } else {
+                    setHovered(c.id);
+                    setHoveredStar(key);
+                  }
                 }}
               />
             );
@@ -467,32 +509,35 @@ const Legend = () => (
 /* ─────────────────────────────────────────────
    MAIN
 ───────────────────────────────────────────── */
-const Skills = () => (
-  <section id="skills" className="relative z-10 py-24 px-6">
-    <div className="max-w-7xl mx-auto">
-      {/* Heading */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-        className="text-center mb-12"
-      >
-        <p className="text-cyan-400 text-xs font-mono tracking-[0.3em] uppercase mb-3">
-          WHAT I WORK WITH
-        </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          My{" "}
-          <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Skills
-          </span>
-        </h2>
-        <div className="w-16 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto rounded-full mb-4" />
-        <p className="text-gray-500 text-sm font-mono">
-          Hover any star to explore — each one is a skill I've used in real
-          projects
-        </p>
-      </motion.div>
+const Skills = () => {
+  const isTouch = useIsTouchDevice();
+  return (
+    <section id="skills" className="relative z-10 py-24 px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <p className="text-cyan-400 text-xs font-mono tracking-[0.3em] uppercase mb-3">
+            WHAT I WORK WITH
+          </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            My{" "}
+            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              Skills
+            </span>
+          </h2>
+          <div className="w-16 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto rounded-full mb-4" />
+          <p className="text-gray-500 text-sm font-mono">
+            {isTouch
+              ? "Tap any star to explore — each one is a skill I've used in real projects"
+              : "Hover any star to explore — each one is a skill I've used in real projects"}
+          </p>
+        </motion.div>
 
       {/* Galaxy Map */}
       <motion.div
@@ -559,6 +604,7 @@ const Skills = () => (
       </motion.div>
     </div>
   </section>
-);
+  );
+};
 
 export default Skills;
