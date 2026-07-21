@@ -248,6 +248,7 @@ const StarNode = ({
   onLeave,
   onToggle,
   isTouch,
+  isNarrow,
   isVisibleRef,
 }) => {
   const pulseRef = useRef(null);
@@ -260,6 +261,7 @@ const StarNode = ({
 
   const active = constellationHovered;
   const sz = star.size;
+  const glowMultiplier = isNarrow ? 2.2 : 3.5;
 
   return (
     <div
@@ -277,8 +279,8 @@ const StarNode = ({
         ref={pulseRef}
         className="absolute rounded-full"
         style={{
-          width: sz * 3.5,
-          height: sz * 3.5,
+          width: sz * glowMultiplier,
+          height: sz * glowMultiplier,
           top: "50%",
           left: "50%",
           background: `radial-gradient(circle, ${glow}${active ? "0.18" : "0.10"}) 0%, transparent 70%)`,
@@ -361,10 +363,24 @@ const StarNode = ({
 const GalaxyMap = () => {
   const [hovered, setHovered] = useState(null); // constellation id
   const [hoveredStar, setHoveredStar] = useState(null); // "cid:si"
+  const [containerWidth, setContainerWidth] = useState(0);
   const scanRef = useRef(null);
   const containerRef = useRef(null);
   const isVisibleRef = useRef(false);
   const isTouch = useIsTouchDevice();
+  const isNarrow = containerWidth > 0 && containerWidth < 480;
+
+  // Track the map's own rendered width (not the viewport) so the
+  // constellation labels and star glow can shrink to fit on small screens.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => setContainerWidth(el.offsetWidth);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Only run the per-frame animations (scan line + star pulses) while the
   // galaxy map is actually on screen.
@@ -418,12 +434,17 @@ const GalaxyMap = () => {
             y="90%"
             textAnchor="middle"
             fill={c.color}
-            fontSize="11"
+            fontSize={isNarrow ? "7" : "11"}
             fontFamily="monospace"
             opacity={hovered === c.id ? 0.9 : 0.35}
-            style={{ transition: "opacity 0.3s", letterSpacing: "0.15em" }}
+            style={{
+              transition: "opacity 0.3s",
+              letterSpacing: isNarrow ? "0.03em" : "0.15em",
+            }}
           >
-            ── {c.label.toUpperCase()} ──
+            {isNarrow
+              ? c.label.toUpperCase()
+              : `── ${c.label.toUpperCase()} ──`}
           </text>
         ))}
       </svg>
@@ -457,6 +478,7 @@ const GalaxyMap = () => {
                 isHovered={hoveredStar === key}
                 isVisibleRef={isVisibleRef}
                 isTouch={isTouch}
+                isNarrow={isNarrow}
                 onEnter={() => {
                   setHovered(c.id);
                   setHoveredStar(key);
