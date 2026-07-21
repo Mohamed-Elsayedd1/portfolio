@@ -523,10 +523,12 @@ const About = () => {
         />
       ))}
 
-      <DistantPlanet />
+      <div className="hidden md:block">
+        <DistantPlanet />
+      </div>
 
       <div
-        className="absolute inset-0 pointer-events-none overflow-hidden"
+        className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block"
         style={{ zIndex: 6 }}
       >
         <GuidedRocket sectionRef={sectionRef} />
